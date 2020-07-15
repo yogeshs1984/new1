@@ -25,14 +25,21 @@ stages:
     steps:
 
     - task: Bash@3
-      displayName: Terraform Backend Initialization
+      displayName: Terraform Initialization
       inputs:
         targetType: inline
         workingDirectory: $(Build.SourcesDirectory)/terraform
         script: terraform init
- 
+
     - task: Bash@3
       displayName: terraform validate
+      inputs:
+        targetType: inline
+        script: echo $(ARM_CLIENT_ID)
+        workingDirectory: $(Build.SourcesDirectory)/terraform
+
+    - task: Bash@3
+      displayName: terraform planning State
       inputs:
         targetType: inline
         script: terraform plan -var="environment=${{parameters.Environment}}"
