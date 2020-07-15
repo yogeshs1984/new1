@@ -13,3 +13,8 @@ resource "azurerm_resource_group" "tf" {
   location = var.location
   tags     = var.tags
 }
+
+variable "environment" {}
+variable "azure_resource_group" {
+    default = "demo"
+}
