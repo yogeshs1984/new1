@@ -1,17 +1,9 @@
 provider "azurerm" {
     features {}
     version = "=2.5.0"
-      # subscription_id = "40fc8367-71d9-465f-9ce5-77dba3008cb4"
-      # client_id       = "92229412-7e97-4d4c-b5b0-6abc1bce6b59"
-      # client_secret   = "eaF-RO74ASTF4Akv3fX3T6TZ8PK_ud1lEL"
-      # tenant_id       = "378f7e1e-4cb7-4e2b-a141-a5719085c679"
+
 }
 
-
-# pre requiremnets
-# resource group
-# keyvault
-# Backend Storage account
 
 resource "azurerm_resource_group" "tf" {
   name     = "${var.azure_resource_group}-${var.environment}"
@@ -122,17 +114,6 @@ resource "azurerm_availability_set" "jumpavset" {
  managed                      = true
 }
 
-# resource "azurerm_managed_disk" "testdisk" {
-#  count                = 2
-#  name                 = "oracle-server-datadisk-00${count.index + 1}"
-#  location             = azurerm_resource_group.tf.location
-#  resource_group_name  = azurerm_resource_group.tf.name
-#  storage_account_type = "Standard_LRS"
-#  create_option        = "Empty"
-#  disk_size_gb         = "10"
-# }
-
-
 resource "azurerm_virtual_machine" "jumpservers" {
  count                 = 1
  name                  = "${azurerm_resource_group.tf.name}-jump-server-00${count.index + 1}"
@@ -161,24 +142,6 @@ resource "azurerm_virtual_machine" "jumpservers" {
    create_option     = "FromImage"
    managed_disk_type = "Standard_LRS"
  }
-
-#  # Optional data disks
-#  storage_data_disk {
-#    name              = "datadisk-jumpserver-${count.index + 1}"
-#    managed_disk_type = "Standard_LRS"
-#    create_option     = "Empty"
-#    lun               = 0
-#    disk_size_gb      = "10"
-#  }
-
-#  storage_data_disk {
-#    name            = element(azurerm_managed_disk.testdisk.*.name, count.index)
-#    managed_disk_id = element(azurerm_managed_disk.testdisk.*.id, count.index)
-#    create_option   = "Attach"
-#    lun             = 1
-#    disk_size_gb    = element(azurerm_managed_disk.testdisk.*.disk_size_gb, count.index)
-#  }
-
 
 
  os_profile {
@@ -265,96 +228,6 @@ resource "azurerm_subnet_network_security_group_association" "aksSubnet" {
   subnet_id                 = azurerm_subnet.aksSubnet.id
   network_security_group_id = azurerm_network_security_group.aksSubnet.id
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 # Mongodb server co0nfiguration
@@ -643,55 +516,6 @@ resource "azurerm_network_interface_backend_address_pool_association" "vaulttwo"
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Private EndPoint Subnet
 
 resource "azurerm_subnet" "peSubnet" {
@@ -864,9 +688,7 @@ resource "azurerm_storage_account" "mongodbstorageaccount" {
 }
 
 
-variable "environment" {
-    default = "test"
-}
+variable "environment" {}
 
 variable "azure_resource_group" {
     default = "demo"
