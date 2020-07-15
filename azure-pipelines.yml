@@ -1,0 +1,31 @@
+trigger: none
+resources:
+  - repo: self
+variables: 
+  - group: variable-${{parameters.Environment}}
+
+parameters:
+- name: Environment
+  displayName: Environment
+  type: string
+  default: prod
+
+stages:
+- stage: Deployment${{parameters.Environment}}
+  displayName: ${{parameters.Environment}}
+  jobs:  
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+    - task: Bash@3
+      displayName: Terraform Backend Initialization
+      inputs:
+        targetType: 'inline'
+        workingDirectory: $(Build.SourcesDirectory)/terraform
+        script: |
+            echo $(client_id)
+            echo $(secret_id)
+            echo $(tf_container_access_key)
+
