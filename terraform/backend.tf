@@ -1,15 +1,9 @@
 terraform {
   backend "azurerm" {
-    storage_account_name = var.storage_account_name
-    container_name       = var.container_name
-    access_key           = var.access_key
-    key                  = var.key
-    resource_group_name  = var.backend_resource_group_name
+    storage_account_name = "tfbackendstorageone"
+    container_name       = "tfbackendcontainerone"
+    access_key           = "+O7Ceet1tS9KTTQ8CK7kM7ZlgwILl9JEU2onhvOinrjkcTTeK9E0QakpfkSK0hFeZQ1flSOUdxvT/mYYcZ1GBw=="
+    key                  = "tf.tfstate"
+    resource_group_name  = "tfdependcies"
   }
 }
-
-variable "storage_account_name" {}
-variable "container_name" {}
-variable "access_key" {}
-variable "key" {}
-variable "backend_resource_group_name" {}
