@@ -18,3 +18,6 @@ variable "environment" {}
 variable "azure_resource_group" {
     default = "demo"
 }
+variable "location" {
+    default = "eastus"
+}
