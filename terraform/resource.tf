@@ -21,3 +21,11 @@ variable "azure_resource_group" {
 variable "location" {
     default = "eastus"
 }
+
+variable "tags" {
+  type = map
+  default = {
+    envronment    = "test"
+    provision_by  = "terraform"
+  }
+}
