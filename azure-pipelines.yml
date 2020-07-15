@@ -40,7 +40,7 @@ stages:
           -backend-config="storage_account_name=$(tf_storage_account_name)" \
           -backend-config="container_name=$(tf_container_name)"\
           -backend-config="access_key=$(tf_container_access_key)" \
-          -backend.config="resource_group_name=$(tfstorageaccountresourcegroup"
+          -backend.config="resource_group_name=$(tfstorageaccountresourcegroup" \
           -backend-config="key=${{parameters.Environment}}-terraform.tfstate"
 
 
