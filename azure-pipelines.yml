@@ -29,7 +29,7 @@ stages:
       inputs:
         targetType: inline
         workingDirectory: $(Build.SourcesDirectory)/terraform
-        script: terraform init
+        script: terraform init -backend-config=../dev/backend.tf
 
     - task: Bash@3
       displayName: terraform validate
