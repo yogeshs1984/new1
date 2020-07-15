@@ -14,8 +14,8 @@ parameters:
     - test
     - prod
 
-- name: doThing
-  default: true
+- name: destroy
+  default: false
   type: boolean
 
 stages:
@@ -33,14 +33,7 @@ stages:
       inputs:
         targetType: inline
         workingDirectory: $(Build.SourcesDirectory)/terraform
-        script: terraform init -backend-config=../${{parameters.Environment}}/backend.tf
-
-    - task: Bash@3
-      displayName: terraform validate
-      inputs:
-        targetType: inline
-        script: echo $(ARM_CLIENT_ID)
-        workingDirectory: $(Build.SourcesDirectory)/terraform
+        script: terraform init -backend-config=../variables/${{parameters.Environment}}/backend.tf
 
     - task: Bash@3
       displayName: terraform planning State
@@ -48,24 +41,20 @@ stages:
         targetType: inline
         script: terraform plan -var="environment=${{parameters.Environment}}"
         workingDirectory: $(Build.SourcesDirectory)/terraform
+      condition: and(succeeded(), eq('${{ parameters.destroy }}', false))
 
     - task: Bash@3
-      displayName: terraform planning State
+      displayName: terraform apply State
       inputs:
         targetType: inline
         script: terraform apply -auto-approve -var="environment=${{parameters.Environment}}"
         workingDirectory: $(Build.SourcesDirectory)/terraform
+      condition: and(succeeded(), eq('${{ parameters.destroy }}', false))
 
-    # - task: Bash@3
-    #   displayName: terraform plan
-    #   inputs:
-    #     targetType: 'inline'
-    #     script: terraform plan
-    #     workingDirectory: $(Build.SourcesDirectory)/terraform
-
-    # - task: Bash@3
-    #   displayName: Resource Create
-    #   inputs:
-    #     targetType: 'inline'
-    #     script: terraform apply -auto-approve -var="environment=${{parameters.Environment}}"
-    #     workingDirectory: $(Build.SourcesDirectory)/terraform
+    - task: Bash@3
+      displayName: terraform destroy State
+      inputs:
+        targetType: inline
+        script: terraform destroy -auto-approve -var="environment=${{parameters.Environment}}"
+        workingDirectory: $(Build.SourcesDirectory)/terraform
+      condition: and(succeeded(), eq('${{ parameters.destroy }}', true))
