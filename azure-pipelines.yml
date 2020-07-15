@@ -8,7 +8,11 @@ parameters:
 - name: Environment
   displayName: Environment
   type: string
-  default: prod
+  default: ""
+  values:
+    - dev
+    - test
+    - prod
 
 - name: doThing
   default: true
