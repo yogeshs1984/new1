@@ -4,6 +4,9 @@ provider "azurerm" {
 
 }
 
+terraform {
+  backend "local" {}
+}
 
 resource "azurerm_resource_group" "tf" {
   name     = "${var.azure_resource_group}-${var.environment}"
