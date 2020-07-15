@@ -10,6 +10,10 @@ parameters:
   type: string
   default: prod
 
+- name: doThing
+  default: true
+  type: boolean
+
 stages:
 - stage: Deployment${{parameters.Environment}}
   displayName: ${{parameters.Environment}}
@@ -20,12 +24,44 @@ stages:
       vmImage: ubuntu-latest
     steps:
     - task: Bash@3
+      displayName: terraform init
+      inputs:
+        targetType: inline
+        script: terraform init
+        workingDirectory: $(Build.SourcesDirectory)/terraform
+
+    - task: Bash@3
       displayName: Terraform Backend Initialization
       inputs:
-        targetType: 'inline'
+        targetType: inline
         workingDirectory: $(Build.SourcesDirectory)/terraform
         script: |
-            echo $(client_id)
-            echo $(secret_id)
-            echo $(tf_container_access_key)
+          terraform init \
+          -backend-config="storage_account_name=$(tf_storage_account_name)" \
+          -backend-config="container_name=$(tf_container_name)"\
+          -backend-config="access_key=$(tf_container_access_key)" \
+          -backend.config="resource_group_name=$(tfstorageaccountresourcegroup"
+          -backend-config="key=${{parameters.Environment}}-terraform.tfstate"
 
+
+        
+    # - task: Bash@3
+    #   displayName: terraform validate
+    #   inputs:
+    #     targetType: 'inline'
+    #     script: terraform validate
+    #     workingDirectory: $(Build.SourcesDirectory)/terraform
+
+    # - task: Bash@3
+    #   displayName: terraform plan
+    #   inputs:
+    #     targetType: 'inline'
+    #     script: terraform plan
+    #     workingDirectory: $(Build.SourcesDirectory)/terraform
+
+    # - task: Bash@3
+    #   displayName: Resource Create
+    #   inputs:
+    #     targetType: 'inline'
+    #     script: terraform apply -auto-approve -var="environment=${{parameters.Environment}}"
+    #     workingDirectory: $(Build.SourcesDirectory)/terraform
