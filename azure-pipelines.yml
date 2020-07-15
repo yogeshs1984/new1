@@ -35,7 +35,7 @@ stages:
       displayName: terraform validate
       inputs:
         targetType: inline
-        script: terraform validate -var="environment=${{parameters.Environment}}"
+        script: terraform plan -var="environment=${{parameters.Environment}}"
         workingDirectory: $(Build.SourcesDirectory)/terraform
 
     # - task: Bash@3
