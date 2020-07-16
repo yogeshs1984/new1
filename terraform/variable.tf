@@ -28,3 +28,10 @@ variable "tags" {
     provision_by  = "terraform"
   }
 }
+
+variable "ssh_public_key" {
+    default = ".ssh/kubernetes.pub"
+}
+
+variable "client_id" {}
+variable "client_secret" {}
