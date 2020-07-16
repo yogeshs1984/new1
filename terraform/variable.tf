@@ -1,7 +1,7 @@
 variable "environment" {} # runtime variable
 
 variable "azure_resource_group" {
-    default = "demo"
+    default = "ddet"
 }
 
 variable "virtual_networks" {
