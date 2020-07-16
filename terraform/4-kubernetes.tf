@@ -34,7 +34,7 @@ resource "azurerm_kubernetes_cluster" "tf" {
   name                = "${azurerm_resource_group.tf.name}-kubernetes-service"
   location            = azurerm_resource_group.tf.location
   resource_group_name = azurerm_resource_group.tf.name
-  dns_prefix          = var.dns_prefix
+  dns_prefix          = "${azurerm_resource_group.tf.name}-kubernetes-service-dns"
 
   linux_profile {
     admin_username = "ubuntu"
