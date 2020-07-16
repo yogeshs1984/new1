@@ -44,7 +44,7 @@ resource "azurerm_kubernetes_cluster" "tf" {
   }
 
   default_node_pool {
-    name                = "${azurerm_resource_group.tf.name}-kubernetes-service-pool"
+    name                = replace("${azurerm_resource_group.tf.name}-kubernetes-service-pool", "-", "")
     enable_auto_scaling = true
     type                = "VirtualMachineScaleSets"
     min_count           = 1
