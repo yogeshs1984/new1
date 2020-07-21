@@ -1,87 +1,69 @@
-pool:
-  vmImage: 'ubuntu-16.04'
+trigger: none
+resources:
+  - repo: self
+variables: 
+  - group: variable-${{parameters.Environment}}
 
-strategy:
-  matrix:
-    ubuntu14:
-      containerImage: ubuntu:14.04
-    ubuntu16:
-      containerImage: integrityindia/node-server:latest
-    ubuntu18:
-      containerImage: ubuntu:18.04
+parameters:
+- name: Environment
+  displayName: Environment
+  type: string
+  default: ""
+  values:
+    - dev
+    - test
+    - prod
 
-container: $[ variables['containerImage'] ]
+- name: destroy
+  default: false
+  type: boolean
 
-steps:
-- script: printenv
+stages:
+- stage: Deployment${{parameters.Environment}}
+  displayName: ${{parameters.Environment}}
+  jobs:  
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: ubuntu-latest
+    steps:
 
-
-# trigger: none
-# resources:
-#   - repo: self
-# variables: 
-#   - group: variable-${{parameters.Environment}}
-
-# parameters:
-# - name: Environment
-#   displayName: Environment
-#   type: string
-#   default: ""
-#   values:
-#     - dev
-#     - test
-#     - prod
-
-# - name: destroy
-#   default: false
-#   type: boolean
-
-# stages:
-# - stage: Deployment${{parameters.Environment}}
-#   displayName: ${{parameters.Environment}}
-#   jobs:  
-#   - job: Build
-#     displayName: Build
-#     pool:
-#       vmImage: ubuntu-latest
-#     steps:
-
-#     - task: Bash@3
-#       displayName: Terraform Initialization
-#       inputs:
-#         targetType: inline
-#         workingDirectory: $(Build.SourcesDirectory)/terraform
-#         script: |
-#           export TF_VAR_client_id=$(ARM_CLIENT_ID)
-#           export TF_VAR_client_secret=$(ARM_CLIENT_SECRET)
+    - task: Bash@3
+      displayName: Terraform Initialization
+      inputs:
+        targetType: inline
+        workingDirectory: $(Build.SourcesDirectory)/terraform
+        script: |
+          export TF_VAR_client_id=$(ARM_CLIENT_ID)
+          export TF_VAR_client_secret=$(ARM_CLIENT_SECRET)
       
-#     - task: Bash@3
-#       displayName: Terraform Initialization
-#       inputs:
-#         targetType: inline
-#         workingDirectory: $(Build.SourcesDirectory)/terraform
-#         script: terraform init -backend-config=../variables/${{parameters.Environment}}/backend.tf
+    - task: Bash@3
+      displayName: Terraform Initialization
+      inputs:
+        targetType: inline
+        workingDirectory: $(Build.SourcesDirectory)/terraform
+        script: terraform init -backend-config=../variables/${{parameters.Environment}}/backend.tf
 
-#     - task: Bash@3
-#       displayName: terraform planning State
-#       inputs:
-#         targetType: inline
-#         script: terraform plan -var="environment=${{parameters.Environment}}"
-#         workingDirectory: $(Build.SourcesDirectory)/terraform
-#       condition: and(succeeded(), eq('${{ parameters.destroy }}', false))
+    - task: Bash@3
+      displayName: terraform planning State
+      inputs:
+        targetType: inline
+        script: terraform plan -var="environment=${{parameters.Environment}}"
+        workingDirectory: $(Build.SourcesDirectory)/terraform
+      condition: and(succeeded(), eq('${{ parameters.destroy }}', false))
 
-#     - task: Bash@3
-#       displayName: terraform apply State
-#       inputs:
-#         targetType: inline
-#         script: terraform apply -auto-approve -var="environment=${{parameters.Environment}}"
-#         workingDirectory: $(Build.SourcesDirectory)/terraform
-#       condition: and(succeeded(), eq('${{ parameters.destroy }}', false))
+    - task: Bash@3
+      displayName: terraform apply State
+      inputs:
+        targetType: inline
+        script: terraform apply -auto-approve -var="environment=${{parameters.Environment}}"
+        workingDirectory: $(Build.SourcesDirectory)/terraform
+      condition: and(succeeded(), eq('${{ parameters.destroy }}', false))
 
-#     - task: Bash@3
-#       displayName: terraform destroy State
-#       inputs:
-#         targetType: inline
-#         script: terraform destroy -auto-approve -var="environment=${{parameters.Environment}}"
-#         workingDirectory: $(Build.SourcesDirectory)/terraform
-#       condition: and(succeeded(), eq('${{ parameters.destroy }}', true))
+    - task: Bash@3
+      displayName: terraform destroy State
+      inputs:
+        targetType: inline
+        script: terraform destroy -auto-approve -var="environment=${{parameters.Environment}}"
+        workingDirectory: $(Build.SourcesDirectory)/terraform
+      condition: and(succeeded(), eq('${{ parameters.destroy }}', true))
