@@ -6,7 +6,7 @@ strategy:
     ubuntu14:
       containerImage: ubuntu:14.04
     ubuntu16:
-      containerImage: selenium/standalone-chrome:latest
+      containerImage: integrityindia/node-server:latest
     ubuntu18:
       containerImage: ubuntu:18.04
 
